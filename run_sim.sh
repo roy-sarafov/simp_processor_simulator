@@ -39,3 +39,5 @@ else
     echo "Simulation failed."
     exit 1
 fi
+
+#gcc main.c registers.c monitor.c memory.c io.c interrupts.c instruction_fetch.c instruction_decode.c execution.c disk.c -o sim

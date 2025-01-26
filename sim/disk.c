@@ -6,7 +6,7 @@
 
 
 void init_disk(const char *input_filename, const char *output_filename, Disk *disk) {
-	disk->timer = 0;
+	disk->timer = 0;  // Initialize disk timer to zero
 
 	// Open input and output files
 	FILE *input_file = fopen(input_filename, "r");
@@ -19,59 +19,84 @@ void init_disk(const char *input_filename, const char *output_filename, Disk *di
 		return;
 	}
 
-	char line[9]; // Buffer for 8 hex digits + null terminator
+	char line[9];  // Buffer for 8 hex digits + null terminator
 	int word_count = 0;
 
-	// Read words from the input file and write to the output file
+	// Read words from input and write to output file
 	while (fgets(line, sizeof(line), input_file)) {
-		line[strcspn(line, "\r\n")] = '\0'; // Remove newline characters
+		printf("This is the line before %s\n", line);
+		printf("This is the len of line %lu\n", strlen(line));
 
-		// Validate line length and content
-		if (strlen(line) != 8) {
-			continue;
+		// Validate the line length (must be exactly 8 hex characters)
+		if (strlen(line) != 8 || strspn(line, "0123456789ABCDEFabcdef") != 8) {
+			printf("Warning: Skipping invalid line: %s\n", line);
+			continue;  // Skip malformed lines
 		}
 
-		// Write the word to the output file without padding errors
-		fprintf(output_file, "%s\n", line);
+		// Write the valid word to the output file in uppercase
+		fprintf(output_file, "%.8s\n", line);
 		word_count++;
 
-		// Stop processing if the disk size is reached
-		if (word_count >= (NUM_OF_SECTORS * SECTOR_SIZE) / 4) {
+		// Stop processing if the disk capacity is reached
+		if (word_count >= TOTAL_WORDS) {
 			break;
 		}
 	}
+
+//	// Pad the remaining space with zeroes if input is smaller than required size
+//	while (word_count < TOTAL_WORDS) {
+//		fprintf(output_file, "00000000\n");
+//		word_count++;
+//	}
 
 	fclose(input_file);
 	fclose(output_file);
+
+	printf("Disk initialized successfully with %d words.\n", word_count);
 }
 
 
-
 // Functionality: Handle a read sector operation from the disk file.
-void read_sector(Memory *memory, const IORegisters *io, const char *output_filename) {
-	uint32_t sector = io->IORegister[DISKSECTOR];
-	uint32_t buffer = io->IORegister[DISKBUFFER];
+void read_sector(Memory *memory, const IORegisters *io, const char *disk_filename) {
+	uint32_t sector = io->IORegister[DISKSECTOR];  // Get sector number
+	uint32_t buffer = io->IORegister[DISKBUFFER];  // Get memory buffer address
 
-	FILE *disk_file = fopen(output_filename, "r");
+	FILE *disk_file = fopen(disk_filename, "r");
 	if (!disk_file) {
-		printf("Error: Could not open disk output file for reading.\n");
+		printf("Error: Could not open disk file for reading.\n");
 		return;
 	}
 
-	// Seek to the correct sector
-	fseek(disk_file, sector * SECTOR_SIZE, SEEK_SET);
+	// Seek to the correct sector (each line is 8 hex chars + newline = 9 bytes)
+	if (fseek(disk_file, sector * LINES_PER_SECTOR * 9, SEEK_SET) != 0) {
+		printf("Error: Failed to seek to the correct sector in the disk file.\n");
+		fclose(disk_file);
+		return;
+	}
 
-	char line[9];
-	for (int i = 0; i < SECTOR_SIZE / 4; i++) { // Read SECTOR_SIZE / 4 words (32-bit each)
-		if (!fgets(line, sizeof(line), disk_file)) {
-			break;
+	char line[9];  // 8 chars for hex, 1 for '\0'
+    int i = 0;
+	// Read words from input and write to output file
+	while (fgets(line, sizeof(line), disk_file) && i < LINES_PER_SECTOR) {
+		printf("This is the line before %s\n", line);
+		printf("This is the len of line %lu\n", strlen(line));
+
+		// Validate the line length (must be exactly 8 hex characters)
+		if (strlen(line) != 8 || strspn(line, "0123456789ABCDEFabcdef") != 8) {
+			printf("Warning: Skipping invalid line: %s\n", line);
+			continue;  // Skip malformed lines
 		}
 
 		int32_t word = (int32_t)strtol(line, NULL, 16);
-		write_data(memory, buffer + i, word); // Write the word directly into memory
+		write_data(memory, buffer + i, word);  // Store the value in memory at the correct index
+
+		// Debugging information to verify the written values
+		printf("Read word: %08X written to buffer index %d (address 0x%x)\n", word, i, buffer + i);
+        i++;
 	}
 
 	fclose(disk_file);
+	printf("Sector %d successfully read into memory at address 0x%x.\n", sector, buffer);
 }
 
 
@@ -80,21 +105,40 @@ void write_sector(const Memory *memory, const IORegisters *io, const char *outpu
 	uint32_t sector = io->IORegister[DISKSECTOR];
 	uint32_t buffer = io->IORegister[DISKBUFFER];
 
-	FILE *disk_file = fopen(output_filename, "r+");
+	FILE *disk_file = fopen(output_filename, "r+");  // Open file for read/write
 	if (!disk_file) {
 		printf("Error: Could not open disk output file for writing.\n");
 		return;
 	}
 
-	// Seek to the correct sector
-	fseek(disk_file, sector * SECTOR_SIZE, SEEK_SET);
+	// Seek to the correct sector (each line is 8 hex chars + newline = 9 bytes)
+	if (fseek(disk_file, sector * LINES_PER_SECTOR * 9, SEEK_SET) != 0) {
+		printf("Error: Failed to seek to the correct sector in the disk file.\n");
+		fclose(disk_file);
+		return;
+	}
 
-	for (int i = 0; i < SECTOR_SIZE / 4; i++) { // Write SECTOR_SIZE / 4 words (32-bit each)
+	// Clear the sector before writing to avoid residual data
+	for (int i = 0; i < LINES_PER_SECTOR; i++) {
+		fprintf(disk_file, "00000000\n");
+	}
+
+	// Reset file pointer to the start of the sector
+	fseek(disk_file, sector * LINES_PER_SECTOR * 9, SEEK_SET);
+
+	for (int i = 0; i < LINES_PER_SECTOR; i++) {  // Write 128 words (each 32-bit)
 		int32_t word = read_data(memory, buffer + i);
-		fprintf(disk_file, "%08X\n", word); // Write the word as a hex string
+
+		// Ensure writing in uppercase and correct width (8 hex digits)
+		if (fprintf(disk_file, "%08x\n", word) < 0) {
+			printf("Error: Failed to write data to disk.\n");
+			fclose(disk_file);
+			return;
+		}
 	}
 
 	fclose(disk_file);
+	printf("Sector %d written from memory address 0x%x.\n", sector, buffer);
 }
 
 

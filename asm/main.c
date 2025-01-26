@@ -138,12 +138,12 @@ void firstPass(char *filename) {
                 exit(1);
             }
 
-            for (size_t i = 0; i < len - 1; i++) {
-                if (!isalnum(token[i])) {
-                    printf("Error: Invalid label %s (only letters and numbers allowed)\n", token);
-                    exit(1);
-                }
-            }
+//            for (size_t i = 0; i < len - 1; i++) {
+//                if (!isalnum(token[i])) {
+//                    printf("Error: Invalid label %s (only letters and numbers allowed)\n", token);
+//                    exit(1);
+//                }
+//            }
 
             // Store label and address
             strcpy(labelTable[labelCount].label, token);

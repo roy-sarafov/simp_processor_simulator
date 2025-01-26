@@ -8,6 +8,10 @@
 // Disk constants
 #define SECTOR_SIZE 512		// Bytes per sector
 #define NUM_OF_SECTORS 128	//Total sectors
+#define WORD_SIZE 4      // 4 bytes per 32-bit word
+#define LINES_PER_SECTOR (SECTOR_SIZE / WORD_SIZE)  // 128 lines per sector
+#define TOTAL_WORDS (NUM_OF_SECTORS * (SECTOR_SIZE / WORD_SIZE))  // Total words on disk
+
 
 // Disk structure
 typedef struct {

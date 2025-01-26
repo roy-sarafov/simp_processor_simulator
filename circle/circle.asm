@@ -1,7 +1,7 @@
 
-
     .word 0x100 10                              # writre address 0x100 to radius
-redius:
+
+radius:
     lw $s0, $imm1, $zero, $zero, 0x100, 0       # s0 = radius
     mac $s0, $s0, $s0, $zero, 0, 0              # s0 = radius^2
 xy:
