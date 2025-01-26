@@ -1,6 +1,6 @@
 
-    .word 0x100 2                               # write adress 0x100 to n
-    .word 0x101 1                               # writre adress 0x101 to k
+    .word 0x100 6                               # write adress 0x100 to n
+    .word 0x101 4                               # writre adress 0x101 to k
 
 	add $sp, $imm1, $imm2, $zero, 2047, 2047    # set stack pointer to 4094
 	add $sp, $imm1, $sp, $zero, 1, 0            # set stack pointer to 4095

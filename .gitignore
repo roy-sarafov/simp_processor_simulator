@@ -29,7 +29,6 @@
 *.ipch
 *.tlog
 *.tmp
-*.txt
 
 # Microsoft Visual Studio temporary files
 _ReSharper.Caches/

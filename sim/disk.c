@@ -24,8 +24,6 @@ void init_disk(const char *input_filename, const char *output_filename, Disk *di
 
 	// Read words from input and write to output file
 	while (fgets(line, sizeof(line), input_file)) {
-		printf("This is the line before %s\n", line);
-		printf("This is the len of line %lu\n", strlen(line));
 
 		// Validate the line length (must be exactly 8 hex characters)
 		if (strlen(line) != 8 || strspn(line, "0123456789ABCDEFabcdef") != 8) {
@@ -78,8 +76,6 @@ void read_sector(Memory *memory, const IORegisters *io, const char *disk_filenam
     int i = 0;
 	// Read words from input and write to output file
 	while (fgets(line, sizeof(line), disk_file) && i < LINES_PER_SECTOR) {
-		printf("This is the line before %s\n", line);
-		printf("This is the len of line %lu\n", strlen(line));
 
 		// Validate the line length (must be exactly 8 hex characters)
 		if (strlen(line) != 8 || strspn(line, "0123456789ABCDEFabcdef") != 8) {

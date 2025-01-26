@@ -1,5 +1,5 @@
 
-    .word 0x100 10                              # writre address 0x100 to radius
+    .word 0x100 3                              # writre address 0x100 to radius
 
 radius:
     lw $s0, $imm1, $zero, $zero, 0x100, 0       # s0 = radius
