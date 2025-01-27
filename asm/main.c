@@ -91,6 +91,7 @@ int getOpcodeNumber(char *opcode) {
     exit(1);
 }
 
+//searches for a given label in the labelTable and returns its corresponding memory address.
 int getLabelAddress(char *label) {
     for (int i = 0; i < labelCount; i++) {
         if (strcmp(labelTable[i].label, label) == 0) {
@@ -101,7 +102,8 @@ int getLabelAddress(char *label) {
     printf("Error: Undefined label %s\n", label);
     exit(1);
 }
-
+//initial scan of the input assembly file to identify and store labels with their respective line addresses,
+// which are later used for resolving symbolic references during the second pass of assembly.
 void firstPass(char *filename) {
     FILE *file = fopen(filename, "r");
     if (!file) {
