@@ -62,7 +62,7 @@ int getRegisterNumber(char *reg) {
     exit(1);
 }
 
-// Function to map opcode mnemonics to their respective numbers
+// Function to map opcode to their respective numbers
 int getOpcodeNumber(char *opcode) {
     if (strcmp(opcode, "add") == 0) return 0;
     if (strcmp(opcode, "sub") == 0) return 1;
