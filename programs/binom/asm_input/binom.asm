@@ -1,7 +1,3 @@
-
-    .word 0x100 6                               # write adress 0x100 to n
-    .word 0x101 4                               # writre adress 0x101 to k
-
 	add $sp, $imm1, $imm2, $zero, 2047, 2047    # set stack pointer to 4094
 	add $sp, $imm1, $sp, $zero, 1, 0            # set stack pointer to 4095
 	lw $a0, $imm1, $zero, $zero, 0x100, 0	    # load n from address 0x100 into $a0
@@ -41,7 +37,8 @@ exit:
 end:
 	halt $zero, $zero, $zero, $zero, 0, 0	    # halt - exit the simulator
 
-
+    .word 0x100 6                               # write n to adsress 0x100 
+    .word 0x101 4                               # write k to address 0x101 
 
 
 

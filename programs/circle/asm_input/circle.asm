@@ -1,6 +1,3 @@
-
-    .word 0x100 3                              # writre address 0x100 to radius
-
 radius:
     lw $s0, $imm1, $zero, $zero, 0x100, 0       # s0 = radius
     mac $s0, $s0, $s0, $zero, 0, 0              # s0 = radius^2
@@ -33,6 +30,8 @@ advnaceY:
     bge $zero, $s2, $imm1, $imm2, -128, dist    # if y >= -128 -> jump to dist
 
     halt $zero, $zero, $zero, $zero 0, 0        # exit
+
+    .word 0x100 30                              # write radius to address 0x100 
 
 
 
