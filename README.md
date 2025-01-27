@@ -174,6 +174,6 @@ This project is licensed under the MIT License. See the `LICENSE` file for detai
 
 ## Author
 
-- Roy Sarafov and Yoav Dychtawald 
+- Roy Sarafov and Yoav Dychtwald 
 - Email: sarafov.roy@gmail.com & yoavhaid@mail.tau.ac.il
 - GitHub: [github.com/roy-sarafov] [github.com/yoav-43]
