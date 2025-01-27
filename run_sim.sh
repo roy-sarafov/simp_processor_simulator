@@ -10,12 +10,14 @@ fi
 DIR="$1/"
 
 # Define the input and output files
+INTPUT_DIR="sim_input/"
 IMEMIN="imemin.txt"
 DMEMIN="dmemin.txt"
 DISKIN="diskin.txt"
 IRQ2IN="irq2in.txt"
 
 # Define the output files
+OUTPUT_DIR="sim_output/"
 DMEMOUT="dmemout.txt"
 REGOUT="regout.txt"
 TRACE="trace.txt"
@@ -28,9 +30,13 @@ MONITOR="monitor.txt"
 MONITOR_YUV="monitor.yuv"
 
 # Run the simulation
-./sim/sim "$DIR$IMEMIN" "$DIR$DMEMIN" "$DIR$DISKIN" "$DIR$IRQ2IN" \
-    "$DIR$DMEMOUT" "$DIR$REGOUT" "$DIR$TRACE" "$DIR$HWREGTRACE" \
-    "$DIR$CYCLES" "$DIR$LEDS" "$DIR$DISPLAY" "$DIR$DISKOUT" "$DIR$MONITOR" "$DIR$MONITOR_YUV"
+./sim/sim "$PROGRAMS_DIR$DIR$INTPUT_DIR$IMEMIN" "$PROGRAMS_DIR$DIR$INTPUT_DIR$DMEMIN" \
+          "$PROGRAMS_DIR$DIR$INTPUT_DIR$DISKIN" "$PROGRAMS_DIR$DIR$INTPUT_DIR$IRQ2IN" \
+          "$PROGRAMS_DIR$DIR$OUTPUT_DIR$DMEMOUT" "$PROGRAMS_DIR$DIR$OUTPUT_DIR$REGOUT" \
+          "$PROGRAMS_DIR$DIR$OUTPUT_DIR$TRACE" "$PROGRAMS_DIR$DIR$OUTPUT_DIR$HWREGTRACE" \
+          "$PROGRAMS_DIR$DIR$OUTPUT_DIR$CYCLES" "$PROGRAMS_DIR$DIR$OUTPUT_DIR$LEDS" \
+          "$PROGRAMS_DIR$DIR$OUTPUT_DIR$DISPLAY" "$PROGRAMS_DIR$DIR$OUTPUT_DIR$DISKOUT" \
+          "$PROGRAMS_DIR$DIR$OUTPUT_DIR$MONITOR" "$PROGRAMS_DIR$DIR$OUTPUT_DIR$MONITOR_YUV"
 
 # Check if the command was successful
 if [ $? -eq 0 ]; then
